@@ -5,7 +5,7 @@ import { ControleEditoraService } from '../controle-editora.service';
 import { Livro } from '../livro';
 import { Editora } from '../editora';
 import { NgFor } from '@angular/common';
-import { FormsModule} from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-livro-dados',
@@ -23,17 +23,18 @@ export class LivroDadosComponent {
     private servEditora: ControleEditoraService,
     private servLivros: ControleLivrosService,
     private router: Router
-  ) { this.livro = new Livro(0, 0, '', '', [this.autoresForm]) }
+  ) { this.livro = new Livro('', 0, '', '', [this.autoresForm]) }
 
   ngOnInit(): void {
     this.editoras = this.servEditora.getEditoras();
   }
 
   incluir = (): void => {
-    this.livro.autores = this.autoresForm.split('\n'); 
+    this.livro.autores = this.autoresForm.split('\n');
     this.livro.codEditora = Number(this.livro.codEditora)
-    this.servLivros.incluir(this.livro);
-    this.router.navigateByUrl('/lista');
+    this.servLivros.incluir(this.livro).then(() => {
+      this.router.navigateByUrl('/lista');
+    })
   }
 
 }

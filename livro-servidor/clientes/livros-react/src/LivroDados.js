@@ -26,11 +26,10 @@ export default function LivroDados() {
         event.preventDefault()
 
         const novoLivro = {
-            titulo: titulo,
-            resumo: resumo,
+            titulo,
+            resumo,
             autores: autores.split("\n"),
             codEditora: codEditora,
-            _id: null,
         }
         controleLivro.incluir(novoLivro).then(() => {
             navigate("/")

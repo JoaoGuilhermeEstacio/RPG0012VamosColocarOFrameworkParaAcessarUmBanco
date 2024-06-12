@@ -1,3 +1,4 @@
+import { Livro } from "../modelo/Livro";
 
 const baseUrl = "http://localhost:3030/livros"
 
@@ -16,15 +17,23 @@ export class ControleLivro {
         const livros = await response.json()
         return livros;
     }
-    public async incluir(livro: LivroMongo) {
+    public async incluir(livro: Livro) {
+        const newLivro: LivroMongo = {
+            _id: null,
+            codEditora: livro.codEditora,
+            titulo: livro.titulo,
+            resumo: livro.resumo,
+            autores: livro.autores
+        }
+
         const response = (await fetch(baseUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(livro)
+            body: JSON.stringify(newLivro)
         })).ok
-        return { success: response }
+        return response
     }
 
     public async excluir(codigo: string) {

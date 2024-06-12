@@ -21,12 +21,17 @@ export class LivroListaComponent {
 
   ngOnInit(): void {
     this.editoras = this.servEditora.getEditoras();
-    this.livros = this.servLivros.obterLivros();
+    this.servLivros.obterLivros().then((livros) => {
+      this.livros = livros
+    })
   }
 
-  excluir = (codigo: number): void => {
-    this.servLivros.excluir(codigo);
-    this.livros = this.servLivros.obterLivros();
+  excluir = (codigo: string): void => {
+    this.servLivros.excluir(codigo).then(()=>{
+      this.servLivros.obterLivros().then((livros) => {
+        this.livros = livros
+      })
+    })
   }
 
   obterNome = (codEditora: number): string => {

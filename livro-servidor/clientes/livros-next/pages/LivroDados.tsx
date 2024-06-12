@@ -30,13 +30,11 @@ const LivroDados: React.FC = () => {
 
     const incluir = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        const autoresArray = autores.split("\n")
-        const livro: LivroMongo = {
+        const livro = {
             titulo,
             resumo,
-            autores: autoresArray,
+            autores: autores.split("\n"),
             codEditora: Number(codEditora),
-            _id: null,
         }
         const sucesso = await incluirLivro(livro)
         if (sucesso) {

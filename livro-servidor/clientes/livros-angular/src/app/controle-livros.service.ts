@@ -1,52 +1,52 @@
 import { Injectable } from '@angular/core';
 import { Livro } from './livro';
 
+const baseUrl = "http://localhost:3030/livros"
+
+interface LivroMongo {
+  _id: string | null;
+  codEditora: number;
+  titulo: string;
+  resumo: string;
+  autores: string[]
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class ControleLivrosService {
 
-  public livros: Array<Livro> = [
-    {
-      titulo: "Use a Cabeça: Java",
-      resumo: "Use a Cabeça! Java é uma experiência completa de aprendizado em programação orientada a objetos (OO) e Java.",
-      autores: ["Bert Bates", "Kathy Sierra"],
-      codEditora: 0,
-      codigo: 0
-    },
-    {
-      titulo: "Java, como Programador",
-      resumo: "Milhões de alunos e profissionais aprendem programação e desenvolvimento de software com os livros Deitel",
-      autores: ["Paul Deitel", "Harvey Deitel"],
-      codEditora: 1,
-      codigo: 1
-    },
-    {
-      titulo: "Core Java for the Impatient",
-      resumo: `Readers familiar with Horstmann's original, two-volume "Core Java" books who are looking for a comprehensive, bt condensed guide to all of the new features and functions of Java SE 9 will learn how these new features impact the language and core libraries. `,
-      autores: ["Cay Horstmann"],
-      codEditora: 2,
-      codigo: 2
-    }
-  ]
-
-
   constructor() { }
 
-
-  public obterLivros(): Array<Livro> {
-    return this.livros;
+  public async obterLivros(): Promise<Livro[]> {
+    const response = await fetch(baseUrl, { method: 'GET' })
+    const livrosResponse: LivroMongo[] = await response.json()
+    const livros: Livro[] = livrosResponse.map(({ _id, autores, codEditora, resumo, titulo }) => {
+      return { titulo, resumo, codEditora, autores, codigo: _id as string }
+    });
+    return livros
   }
-  public incluir(livro: Livro) {
-    const maxCodigo = Math.max(...this.livros.map(l => l.codigo));
-    livro.codigo = this.livros.length > 0 ? maxCodigo + 1 : 1;
-    this.livros.push(livro)
-  }
-
-  public excluir(codigo: number) {
-    let index = this.livros.findIndex(livro => livro.codigo === codigo)
-    if (index > -1) {
-      this.livros.splice(index, 1)
+  public async incluir(livro: Livro) {
+    const newLivro: LivroMongo = {
+      _id: null,
+      codEditora: livro.codEditora,
+      titulo: livro.titulo,
+      resumo: livro.resumo,
+      autores: livro.autores
     }
+
+    const response = (await fetch(baseUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(newLivro)
+    })).ok
+    return response
+  }
+
+  public async excluir(codigo: string) {
+    const response = (await fetch(`${baseUrl}/${codigo}`, { method: "DELETE" })).ok
+    return { success: response }
   }
 }

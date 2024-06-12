@@ -5,7 +5,7 @@ import {LinhaLivro} from "../componentes/LinhaLivro"
 import {ControleLivro, LivroMongo} from "../classes/controle/ControleLivros"
 
 interface Livro {
-    codigo: string | null
+    codigo: string
     titulo: string
     resumo: string
     codEditora: number
@@ -28,7 +28,7 @@ const LivroLista: React.FC = () => {
         const fetchData = async () => {
             controleLivros.obterLivros().then((livrosMongo: LivroMongo[]) => {
                 const livros: Livro[] = livrosMongo.map((livroMongo) => ({
-                    codigo: livroMongo._id,
+                    codigo: livroMongo._id as string,
                     titulo: livroMongo.titulo,
                     resumo: livroMongo.resumo,
                     codEditora: livroMongo.codEditora,
